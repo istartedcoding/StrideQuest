@@ -1,0 +1,10 @@
+import { Card, Chip, Header, Progress, Screen } from '@/src/components/UI';
+import { challenges } from '@/src/data/mock';
+import { palette } from '@/src/theme';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+
+const filters=['Active','Discover','Friends','Groups'] as const;
+export default function ChallengesScreen(){const router=useRouter();const [filter,setFilter]=useState<(typeof filters)[number]>('Active');const visible=filter==='Active'||filter==='Discover'?challenges:filter==='Friends'?[challenges[0]]:[challenges[1]];return <Screen><Header eyebrow="PUSH FURTHER" title="Challenges"/><View style={styles.chips}>{filters.map(item=><Chip key={item} label={item} selected={filter===item} onPress={()=>setFilter(item)}/>)}</View>{visible.map(c=><Card key={c.id} style={styles.card}><View style={[styles.orb,{backgroundColor:`${c.color}25`}]}><Text style={[styles.symbol,{color:c.color}]}>◆</Text></View><View style={styles.body}><View style={styles.row}><Text style={styles.title}>{c.title}</Text><Text onPress={()=>router.push(`/challenge/${c.id}` as never)} style={styles.link}>View ›</Text></View><Text style={styles.desc}>{c.description}</Text><Progress value={c.progress/c.target} color={c.color}/><View style={styles.row}><Text style={styles.meta}>{c.progress} / {c.target} {c.unit} · {c.endsIn}</Text><Text style={styles.xp}>+{c.rewardXp} XP</Text></View><Text style={styles.people}>{c.participants.toLocaleString()} people joined</Text></View></Card>)}</Screen>}
+const styles=StyleSheet.create({chips:{flexDirection:'row',gap:8,flexWrap:'wrap'},card:{flexDirection:'row',gap:14},orb:{width:58,height:58,borderRadius:18,alignItems:'center',justifyContent:'center'},symbol:{fontSize:25},body:{flex:1,gap:10},row:{flexDirection:'row',justifyContent:'space-between',gap:8},title:{color:palette.text,fontSize:18,fontWeight:'800'},link:{color:palette.accent,fontWeight:'800'},desc:{color:palette.muted,fontSize:12},meta:{color:palette.muted,fontSize:11},xp:{color:palette.lime,fontSize:11,fontWeight:'800'},people:{color:palette.muted,fontSize:10}});
